@@ -1,7 +1,7 @@
 import argparse
 import json
 import os
-from transformers import BertTokenizer, BertForMaskedLM
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 
 if __name__ == '__main__':
@@ -20,6 +20,11 @@ if __name__ == '__main__':
     # Load targets
     form2target = {}
     if args.targets_path.endswith('.json'):
+        if args.all_target_forms:
+            raise NotImplementedError()
+        with open(args.targets_path, 'r', encoding='utf-8') as f_in:
+            form2target = {w: w for w in json.load(f_in) if type(w) == str}
+    else:
         with open(args.targets_path, 'r', encoding='utf-8') as f_in:
             for line in f_in.readlines():
                 line = line.strip()
@@ -29,11 +34,6 @@ if __name__ == '__main__':
                     if args.do_lower_case:
                         form = form.lower()
                     form2target[form] = target
-    else:
-        if args.all_target_forms:
-            raise NotImplementedError()
-        with open(args.targets_path, 'r', encoding='utf-8') as f_in:
-            form2target = {w: w for w in json.load(f_in) if type(w) == str}
 
 
     if args.all_target_forms:
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     print(form2target)
     print('=' * 80)
 
-    tokenizer = BertTokenizer.from_pretrained(
+    tokenizer = AutoTokenizer.from_pretrained(
         args.model_name,
         # cache_dir=model_args.cache_dir,
         use_fast=args.use_fast_tokenizer,
@@ -55,11 +55,10 @@ if __name__ == '__main__':
     )
     print('Tokenizer loaded.')
 
-    model = BertForMaskedLM.from_pretrained(args.model_name)
+    model = AutoModelForMaskedLM.from_pretrained(args.model_name)
     print('Model loaded.')
 
     tokenizer.save_pretrained(args.output_path)
-
 
     targets_ids = [tokenizer.encode(t, add_special_tokens=False) for t in targets]
     print(targets_ids)
