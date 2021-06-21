@@ -49,8 +49,7 @@ if __name__ == '__main__':
     # print(form2target)
     # print('=' * 80)
 
-    logger.warning('N targets:', len(targets))
-
+    logger.warning('N targets: {}'.format(len(targets)))
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_name,
@@ -101,7 +100,7 @@ if __name__ == '__main__':
                     f.write(t + '\n')
                     words_added.append(t)
                 else:
-                    logger.warning('Word not properly added to tokenizer:', t, tokenizer.tokenize(t))
+                    logger.warning('Word not properly added to tokenizer: {} {}'.format(t, tokenizer.tokenize(t)))
 
     logger.warning("\nTarget words added to the vocabulary: {}.\n".format(', '.join(words_added)))
 
