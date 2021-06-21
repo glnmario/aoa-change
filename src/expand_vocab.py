@@ -69,8 +69,11 @@ if __name__ == '__main__':
         for t, t_id in zip(targets, targets_ids):
             print(t, t_id)
 
-            if tokenizer.do_lower_case:
-                t = t.lower()
+            try:
+                if tokenizer.do_lower_case:
+                    t = t.lower()
+            except AttributeError:
+                pass
 
             if t in tokenizer.added_tokens_encoder:
                 print('{} in tokenizer.added_tokens_encoder'.format(t))
