@@ -75,9 +75,12 @@ if __name__ == '__main__':
             except AttributeError:
                 pass
 
-            if t in tokenizer.added_tokens_encoder:
-                print('{} in tokenizer.added_tokens_encoder'.format(t))
-                continue
+            try:
+                if t in tokenizer.added_tokens_encoder:
+                    print('{} in tokenizer.added_tokens_encoder'.format(t))
+                    continue
+            except AttributeError:
+                pass
 
             # assert len(t_id) == 1  # because of never_split list
 
