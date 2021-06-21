@@ -218,9 +218,7 @@ def main():
     with open(args.targets_path, 'r') as f:
         targets = [w for w in json.load(f) if type(w) == str]
 
-    print('=' * 80)
-    print('N targets:', len(targets))
-    print('=' * 80)
+    logger.warning('N targets:', len(targets))
 
     # Load pretrained model and tokenizer
     if args.local_rank not in [-1, 0]:

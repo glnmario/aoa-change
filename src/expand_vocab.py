@@ -1,7 +1,10 @@
 import argparse
 import json
+import logging
 import os
 from transformers import AutoTokenizer, AutoModelForMaskedLM
+
+logger = logging.getLogger(__name__)
 
 
 if __name__ == '__main__':
@@ -41,10 +44,13 @@ if __name__ == '__main__':
     else:
         targets = list(form2target.values())
 
-    print('=' * 80)
-    print('targets:', targets)
-    print(form2target)
-    print('=' * 80)
+    # print('=' * 80)
+    # print('targets:', targets)
+    # print(form2target)
+    # print('=' * 80)
+
+    logger.warning('N targets:', len(targets))
+
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_name,
@@ -53,21 +59,23 @@ if __name__ == '__main__':
         never_split=targets,
         do_lower_case=args.do_lower_case
     )
-    print('Tokenizer loaded.')
 
+    logger.warning('Loading model.')
     model = AutoModelForMaskedLM.from_pretrained(args.model_name)
-    print('Model loaded.')
 
     tokenizer.save_pretrained(args.output_path)
 
+    logger.warning('Encoding all target words using the tokenizer.')
     targets_ids = [tokenizer.encode(t, add_special_tokens=False) for t in targets]
-    print(targets_ids)
+    # print(targets_ids)
     assert len(targets) == len(targets_ids)
+    n_targets = len(targets)
 
+    logger.warning('Checking if target words are in the tokenizer vocabulary.')
     with open(os.path.join(args.output_path, 'vocab.txt'), 'a') as f:
         words_added = []
-        for t, t_id in zip(targets, targets_ids):
-            print(t, t_id)
+        for i, (t, t_id) in enumerate(zip(targets, targets_ids), start=1):
+            logger.warning('{}/{}'.format(i, n_targets))
 
             try:
                 if tokenizer.do_lower_case:
@@ -77,7 +85,7 @@ if __name__ == '__main__':
 
             try:
                 if t in tokenizer.added_tokens_encoder:
-                    print('{} in tokenizer.added_tokens_encoder'.format(t))
+                    logger.warning('{} in tokenizer.added_tokens_encoder'.format(t))
                     continue
             except AttributeError:
                 pass
@@ -93,8 +101,8 @@ if __name__ == '__main__':
                     f.write(t + '\n')
                     words_added.append(t)
                 else:
-                    print('Word not properly added to tokenizer:', t, tokenizer.tokenize(t))
+                    logger.warning('Word not properly added to tokenizer:', t, tokenizer.tokenize(t))
 
-    print("\nTarget words added to the vocabulary: {}.\n".format(', '.join(words_added)))
+    logger.warning("\nTarget words added to the vocabulary: {}.\n".format(', '.join(words_added)))
 
     model.save_pretrained(args.output_path)
