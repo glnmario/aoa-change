@@ -96,11 +96,13 @@ if __name__ == '__main__':
 
             if len(t_id) > 1 or (len(t_id) == 1 and t_id[0] == tokenizer.unk_token_id):
                 if tokenizer.add_tokens([t]):
-                    model.resize_token_embeddings(len(tokenizer))
+                    # model.resize_token_embeddings(len(tokenizer))
                     f.write(t + '\n')
                     words_added.append(t)
                 else:
                     logger.warning('Word not properly added to tokenizer: {} {}'.format(t, tokenizer.tokenize(t)))
+
+    model.resize_token_embeddings(len(tokenizer))
 
     logger.warning("\nTarget words added to the vocabulary: {}.\n".format(', '.join(words_added)))
 
