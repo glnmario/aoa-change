@@ -324,7 +324,7 @@ def main():
                 batch_input_ids['input_ids'] = batch_input_ids['input_ids'].to('cuda')
                 batch_input_ids['attention_mask'] = batch_input_ids['attention_mask'].to('cuda')
 
-            outputs = model(batch_input_ids)
+            outputs = model(**batch_input_ids)
 
             if torch.cuda.is_available():
                 hidden_states = [l.detach().cpu().clone().numpy() for l in outputs[2]]
