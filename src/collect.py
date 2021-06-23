@@ -316,12 +316,13 @@ def main():
             except AttributeError:
                 batch_tuple += (t,)
 
-        batch_input_ids = batch_tuple[0].squeeze(1)
+        batch_input_ids = batch_tuple[0] #.squeeze(1)
         batch_lemmas, batch_spos = batch_tuple[1], batch_tuple[2]
 
         with torch.no_grad():
             if torch.cuda.is_available():
-                batch_input_ids = batch_input_ids.to('cuda')
+                batch_input_ids['input_ids'] = batch_input_ids['input_ids'].to('cuda')
+                batch_input_ids['attention_mask'] = batch_input_ids['attention_mask'].to('cuda')
 
             outputs = model(batch_input_ids)
 
