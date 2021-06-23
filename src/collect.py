@@ -294,9 +294,17 @@ def main():
     nUsages = 0
     curr_idx = {i2w[target]: 0 for target in target_counter}
 
+    def collate(batch):
+        return [
+            {'input_ids': torch.cat([item[0]['input_ids'] for item in batch], dim=0),
+             'attention_mask': torch.cat([item[0]['attention_mask'] for item in batch], dim=0)},
+            [item[1] for item in batch],
+            [item[2] for item in batch]
+        ]
+
     dataset = ContextsDataset(i2w, sentences, args.context_size, tokenizer, sampling_probs, nSentences)
     sampler = SequentialSampler(dataset)
-    dataloader = DataLoader(dataset, sampler=sampler, batch_size=args.batch_size)
+    dataloader = DataLoader(dataset, sampler=sampler, batch_size=args.batch_size, collate_fn=collate)
     iterator = tqdm(dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
 
     for step, batch in enumerate(iterator):
