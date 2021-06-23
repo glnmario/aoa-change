@@ -136,8 +136,8 @@ class ContextsDataset(torch.utils.data.Dataset):
             token_ids = tokenizer.encode(' '.join(sentence), add_special_tokens=False)
             for spos, tok_id in enumerate(token_ids):
                 if tok_id in i2w:
-                    word = i2w[tok_id]
-                    if np.random.random() <= self.sampling_probs[word]:
+                    if np.random.random() <= self.sampling_probs[tok_id]:
+                        word = i2w[tok_id]
                         model_input, pos_in_context = get_context(tokenizer, token_ids, spos, context_size)
                         self.data.append((model_input, word, pos_in_context))
 
@@ -273,7 +273,7 @@ def main():
 
     logger.warning('Total usages: %d' % (sum(list(target_counter.values()))))
 
-    sampling_probs = {w: 1. for w in target_counter}
+    sampling_probs = {target: 1. for target in i2w}
     if args.max_occurrences:
         for w, fr in target_counter.items():
             if fr > args.max_occurrences:
