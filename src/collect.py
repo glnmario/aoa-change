@@ -218,7 +218,7 @@ def main():
     with open(args.targets_path, 'r') as f:
         targets = [w for w in json.load(f) if type(w) == str]
 
-    logger.warning('N targets:', len(targets))
+    logger.warning('N targets: {}'.format(len(targets)))
 
     # Load pretrained model and tokenizer
     if args.local_rank not in [-1, 0]:
@@ -260,16 +260,16 @@ def main():
     # Get sentence iterator
     sentences = PathLineSentences(args.data_path)
 
-    with warnings.catch_warnings():
-        warnings.resetwarnings()
-        warnings.simplefilter("always")
-        nSentences = 0
-        target_counter = {target: 0 for target in i2w}
-        for sentence in sentences:
-            nSentences += 1
-            for tok_id in tokenizer.encode(' '.join(sentence), add_special_tokens=False):
-                if tok_id in target_counter:
-                    target_counter[tok_id] += 1
+    # with warnings.catch_warnings():
+    #     warnings.resetwarnings()
+    #     warnings.simplefilter("always")
+    nSentences = 0
+    target_counter = {target: 0 for target in i2w}
+    for sentence in sentences:
+        nSentences += 1
+        for tok_id in tokenizer.encode(' '.join(sentence), add_special_tokens=False):
+            if tok_id in target_counter:
+                target_counter[tok_id] += 1
 
     logger.warning('Total usages: %d' % (sum(list(target_counter.values()))))
 
