@@ -325,18 +325,21 @@ def main():
                 batch_input_ids['attention_mask'] = batch_input_ids['attention_mask'].to('cuda')
 
             outputs = model(**batch_input_ids)
+            #logger.warning(type(outputs))
+            #logger.warning(len(outputs))
 
             if torch.cuda.is_available():
-                hidden_states = [l.detach().cpu().clone().numpy() for l in outputs[2]]
+                hidden_states = [l.detach().cpu().clone().numpy() for l in outputs[1]]
             else:
-                hidden_states = [l.clone().numpy() for l in outputs[2]]
+                hidden_states = [l.clone().numpy() for l in outputs[1]]
 
             # store usage tuples in a dictionary: lemma -> (vector, position)
             for b_id in np.arange(len(batch_input_ids)):
                 lemma = batch_lemmas[b_id]
 
                 layers = [layer[b_id, batch_spos[b_id] + 1, :] for layer in hidden_states]
-                usage_vector = np.concatenate(layers)
+                #usage_vector = np.concatenate(layers)
+                usage_vector = layers[-1]
                 usages[lemma][curr_idx[lemma], :] = usage_vector
 
                 curr_idx[lemma] += 1
