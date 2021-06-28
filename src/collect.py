@@ -319,6 +319,10 @@ def main():
         batch_input_ids = batch_tuple[0] #.squeeze(1)
         batch_lemmas, batch_spos = batch_tuple[1], batch_tuple[2]
 
+        #logger.warning(batch_input_ids['input_ids'].shape)
+        #logger.warning(len(batch_lemmas))
+        #logger.warning(len(batch_spos))
+
         with torch.no_grad():
             if torch.cuda.is_available():
                 batch_input_ids['input_ids'] = batch_input_ids['input_ids'].to('cuda')
@@ -334,7 +338,7 @@ def main():
                 hidden_states = [l.clone().numpy() for l in outputs[1]]
 
             # store usage tuples in a dictionary: lemma -> (vector, position)
-            for b_id in np.arange(len(batch_input_ids)):
+            for b_id in np.arange(batch_input_ids['input_ids'].shape[0]):
                 lemma = batch_lemmas[b_id]
 
                 layers = [layer[b_id, batch_spos[b_id] + 1, :] for layer in hidden_states]
@@ -346,7 +350,8 @@ def main():
                 nUsages += 1
 
     iterator.close()
-    np.savez_compressed(args.output_path, **usages)
+    logger.warning(usages)
+    np.savez_compressed(**usages, file=args.output_path)
 
     logger.warning('usages: %d' % (nUsages))
     logger.warning("--- %s seconds ---" % (time.time() - start_time))
