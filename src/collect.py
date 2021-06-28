@@ -296,8 +296,8 @@ def main():
 
     def collate(batch):
         return [
-            {'input_ids': torch.cat([item[0]['input_ids'] for item in batch], dim=0),
-             'attention_mask': torch.cat([item[0]['attention_mask'] for item in batch], dim=0)},
+            {'input_ids': torch.cat([item[0]['input_ids'] for item in batch], dim=0).squeeze(1),
+             'attention_mask': torch.cat([item[0]['attention_mask'] for item in batch], dim=0).squeeze(1)},
             [item[1] for item in batch],
             [item[2] for item in batch]
         ]
