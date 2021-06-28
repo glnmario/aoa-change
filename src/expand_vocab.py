@@ -107,3 +107,4 @@ if __name__ == '__main__':
     logger.warning("\nTarget words added to the vocabulary: {}.\n".format(', '.join(words_added)))
 
     model.save_pretrained(args.output_path)
+    tokenizer.save_pretrained(args.output_path)

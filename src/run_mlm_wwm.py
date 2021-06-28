@@ -287,10 +287,12 @@ def main():
     logger.warning('n targets: {}'.format(len(targets)))
 
     if model_args.tokenizer_name:
+        logger.info('Load tokenizer')
         tokenizer = AutoTokenizer.from_pretrained(
             model_args.tokenizer_name, cache_dir=model_args.cache_dir, use_fast=model_args.use_fast_tokenizer,
             never_split=targets, do_lower_case=model_args.do_lower_case
         )
+        logger.info('Tokenizer loaded')
     elif model_args.model_name_or_path:
         tokenizer = AutoTokenizer.from_pretrained(
             model_args.model_name_or_path, cache_dir=model_args.cache_dir, use_fast=model_args.use_fast_tokenizer,
@@ -313,7 +315,9 @@ def main():
         logger.info("Training new model from scratch")
         model = AutoModelForMaskedLM.from_config(config)
 
+    logger.info(model.get_input_embeddings())
     model.resize_token_embeddings(len(tokenizer))
+    logger.info(model.get_input_embeddings())
 
     # Preprocessing the datasets.
     # First we tokenize all the texts.
@@ -330,6 +334,7 @@ def main():
         examples["text"] = [line for line in examples["text"] if len(line) > 0 and not line.isspace()]
         return tokenizer(examples["text"], padding=padding, truncation=True, max_length=data_args.max_seq_length)
 
+    logger.info('Tokenize dataset')
     tokenized_datasets = datasets.map(
         tokenize_function,
         batched=True,
@@ -349,7 +354,8 @@ def main():
     # Data collator
     # This one will take care of randomly masking the tokens.
     data_collator = DataCollatorForWholeWordMask(tokenizer=tokenizer, mlm_probability=data_args.mlm_probability)
-
+    
+    logger.info('Create trainer')
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
@@ -367,7 +373,8 @@ def main():
             if (model_args.model_name_or_path is not None and os.path.isdir(model_args.model_name_or_path))
             else None
         )
-        trainer.train(model_path=model_path)
+        logger.info('Start training')
+        trainer.train(resume_from_checkpoint=model_path)
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
     # Evaluation
