@@ -350,11 +350,13 @@ def main():
                 curr_idx[lemma] += 1
                 nUsages += 1
 
-    for lemma in usages:
-        logger.warning(type(usages[lemma]), usages[lemma].shape)
-
     iterator.close()
-    logger.warning(usages)
+
+    # Interferes with numpy.savez_compressed
+    if 'file' in usages:
+        usages['_file'] = usages['file']
+        del usages['file']
+
     np.savez_compressed(**usages, file=args.output_path)
 
     logger.warning('usages: %d' % (nUsages))
