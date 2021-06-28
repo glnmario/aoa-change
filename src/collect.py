@@ -341,13 +341,17 @@ def main():
             for b_id in np.arange(batch_input_ids['input_ids'].shape[0]):
                 lemma = batch_lemmas[b_id]
 
-                layers = [layer[b_id, batch_spos[b_id] + 1, :] for layer in hidden_states]
+                # layers = [layer[b_id, batch_spos[b_id] + 1, :] for layer in hidden_states]
                 #usage_vector = np.concatenate(layers)
-                usage_vector = layers[-1]
+                # usage_vector = layers[-1]
+                usage_vector = hidden_states[-1][b_id, batch_spos[b_id] + 1, :]
                 usages[lemma][curr_idx[lemma], :] = usage_vector
 
                 curr_idx[lemma] += 1
                 nUsages += 1
+
+    for lemma in usages:
+        logger.warning(type(usages[lemma]), usages[lemma].shape)
 
     iterator.close()
     logger.warning(usages)
