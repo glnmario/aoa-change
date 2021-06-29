@@ -27,7 +27,7 @@ if __name__ == '__main__':
     data_path0 = args.input0
     data_path1 = args.input1
 
-    with open(args.targets_path, 'r') as f:
+    with open(args.target, 'r') as f:
         target_words = [w for w in json.load(f) if type(w) == str]
 
     array0 = np.load(data_path0)
@@ -41,8 +41,14 @@ if __name__ == '__main__':
     except TypeError:
         f_out = None
 
+    n_ = 0
     for word in target_words:
-        frequency = np.median([array0[word].shape[0], array1[word].shape[0]])
+        try:
+            frequency = np.median([array0[word].shape[0], array1[word].shape[0]])
+            n_ += 1
+        except KeyError:
+            continue
+
         if array0[word].shape[0] < 3 or array1[word].shape[0] < 3:
             logger.info('{} omitted because of low frequency'.format(word))
             if args.f:
@@ -74,6 +80,8 @@ if __name__ == '__main__':
             print('\t'.join([word, str(shift), str(frequency)]), file=f_out)
         else:
             print('\t'.join([word, str(shift)]), file=f_out)
+
+    logger.info('{} target words in both time periods'.format(n_))
 
     if f_out:
         f_out.close()

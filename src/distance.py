@@ -6,6 +6,8 @@ import logging
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Average pairwise distance (APD) algorithm
 
@@ -98,14 +100,23 @@ def main():
         raise ValueError('valueFile 2: wrong format.')
 
     # Print only targets to output file
+
+    n_ = 0
     with open(outpath, 'w', encoding='utf-8') as f_out:
         for target in tqdm(targets):
-            frequency = np.median([usages1[target].shape[0], usages2[target].shape[0]])
+            try:
+                frequency = np.median([usages1[target].shape[0], usages2[target].shape[0]])
+                n_ += 1
+            except KeyError:
+                continue
+
             distance = mean_pairwise_distance(usages1[target], usages2[target], distmetric)
             if args['--frequency']:
                 f_out.write('{}\t{}\t{}\n'.format(target, distance, frequency))
             else:
                 f_out.write('{}\t{}\n'.format(target, distance))
+
+    logger.info('{} target words in both time periods'.format(n_))
 
     # logging.info("--- %s seconds ---" % (time.time() - start_time))
 
