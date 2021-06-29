@@ -1,5 +1,6 @@
 # python3
 # coding: utf-8
+import json
 
 import numpy as np
 import argparse
@@ -26,7 +27,8 @@ if __name__ == '__main__':
     data_path0 = args.input0
     data_path1 = args.input1
 
-    target_words = set([w.strip() for w in open(args.target, 'r', encoding='utf-8').readlines()])
+    with open(args.targets_path, 'r') as f:
+        target_words = [w for w in json.load(f) if type(w) == str]
 
     array0 = np.load(data_path0)
     logger.info('Loaded an array of {0} entries from {1}'.format(len(array0), data_path0))

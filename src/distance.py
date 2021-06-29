@@ -1,3 +1,4 @@
+import json
 import pickle
 import numpy as np
 from docopt import docopt
@@ -75,11 +76,8 @@ def main():
     # start_time = time.time()
 
     # Load targets
-    targets = []
-    with open(testset, 'r', encoding='utf-8') as f_in:
-        for line in f_in.readlines():
-            target = line.strip()
-            targets.append(target)
+    with open(testset, 'r') as f:
+        targets = [w for w in json.load(f) if type(w) == str]
 
     # Get usages collected from corpus 1
     if value_file1.endswith('.dict'):
