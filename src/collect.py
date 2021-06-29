@@ -344,11 +344,13 @@ def main():
                 # layers = [layer[b_id, batch_spos[b_id] + 1, :] for layer in hidden_states]
                 #usage_vector = np.concatenate(layers)
                 # usage_vector = layers[-1]
-                usage_vector = hidden_states[-1][b_id, batch_spos[b_id] + 1, :]
-                usages[lemma][curr_idx[lemma], :] = usage_vector
 
-                curr_idx[lemma] += 1
-                nUsages += 1
+                if curr_idx[lemma] < usages[lemma].shape[0]:
+                    usage_vector = hidden_states[-1][b_id, batch_spos[b_id] + 1, :]
+                    usages[lemma][curr_idx[lemma], :] = usage_vector
+
+                    curr_idx[lemma] += 1
+                    nUsages += 1
 
     iterator.close()
 
