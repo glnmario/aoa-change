@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Average pairwise distance (APD) algorithm
 
+
 def mean_pairwise_distance(word_usages1, word_usages2, metric):
     """
     Computes the mean pairwise distance between two usage matrices.
@@ -34,6 +35,7 @@ def mean_pairwise_distance(word_usages1, word_usages2, metric):
         usage_matrix2 = word_usages2
 
     if usage_matrix1.shape[0] == 0 or usage_matrix2.shape[0] == 0:
+        logger.info('In T1: {}   In T2: {}'.format(usage_matrix1.shape[0] > 0, usage_matrix2.shape[0] > 0))
         return 0.
 
     return np.mean(cdist(usage_matrix1, usage_matrix2, metric=metric))
@@ -110,7 +112,9 @@ def main():
             except KeyError:
                 continue
 
+            logger.info(target)
             distance = mean_pairwise_distance(usages1[target], usages2[target], distmetric)
+
             if args['--frequency']:
                 f_out.write('{}\t{}\t{}\n'.format(target, distance, frequency))
             else:
