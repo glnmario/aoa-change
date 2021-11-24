@@ -53,7 +53,7 @@ def mean_variance(word_usages):
         logger.info('In T1: {}'.format(usage_matrix.shape[0] > 0))
         return 0.
 
-    return np.mean(np.var(usage_matrix), axis=0)
+    return np.mean(np.var(usage_matrix, axis=0))
 
 
 def main():
