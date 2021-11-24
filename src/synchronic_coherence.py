@@ -27,8 +27,8 @@ def mean_pairwise_distance(word_usages, metric):
     else:
         usage_matrix = word_usages
 
-    if usage_matrix.shape[0] == 0:
-        logger.info('In T1: {}'.format(usage_matrix.shape[0] > 0))
+    if usage_matrix.shape[0] in [0, 1]:
+        logger.info('Freq: {}'.format(usage_matrix.shape[0]))
         return 0.
 
     return np.mean(pdist(usage_matrix, metric=metric))
@@ -49,8 +49,8 @@ def mean_variance(word_usages):
     else:
         usage_matrix = word_usages
 
-    if usage_matrix.shape[0] == 0:
-        logger.info('In T1: {}'.format(usage_matrix.shape[0] > 0))
+    if usage_matrix.shape[0] in [0, 1]:
+        logger.info('Freq: {}'.format(usage_matrix.shape[0]))
         return 0.
 
     return np.mean(np.var(usage_matrix, axis=0))
