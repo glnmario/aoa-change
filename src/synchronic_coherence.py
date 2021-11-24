@@ -117,9 +117,9 @@ def main():
 
             if args['--frequency']:
                 frequency = usages[target].shape[0]
-                f_out.write('{}\t{}\t{}\n'.format(target, distance, variance, frequency))
+                f_out.write('{}\t{}\t{}\t{}\n'.format(target, distance, variance, frequency))
             else:
-                f_out.write('{}\t{}\n'.format(target, distance, variance))
+                f_out.write('{}\t{}\t{}\n'.format(target, distance, variance))
 
     # logging.warning("--- %s seconds ---" % (time.time() - start_time))
 
