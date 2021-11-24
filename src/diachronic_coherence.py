@@ -107,7 +107,8 @@ def main():
     with open(outpath, 'w', encoding='utf-8') as f_out:
         for target in tqdm(targets):
             try:
-                frequency = np.median([usages1[target].shape[0], usages2[target].shape[0]])
+                frequency1 = usages1[target].shape[0]
+                frequency2 = usages2[target].shape[0]
                 n_ += 1
             except KeyError:
                 continue
@@ -116,7 +117,7 @@ def main():
             distance = mean_pairwise_distance(usages1[target], usages2[target], distmetric)
 
             if args['--frequency']:
-                f_out.write('{}\t{}\t{}\n'.format(target, distance, frequency))
+                f_out.write('{}\t{}\t{}\t{}\n'.format(target, distance, frequency1, frequency2))
             else:
                 f_out.write('{}\t{}\n'.format(target, distance))
 
