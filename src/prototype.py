@@ -3,42 +3,11 @@ import pickle
 import numpy as np
 from docopt import docopt
 import logging
-from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Average pairwise distance (APD) algorithm
-
-
-def mean_pairwise_distance(word_usages1, word_usages2, metric):
-    """
-    Computes the mean pairwise distance between two usage matrices.
-
-    :param word_usages1: a three-place tuple including, in this order, a usage matrix, a list of
-    snippets, and a list of integers indicating the lemma's position in the snippet
-    :param word_usages2: a three-place tuple including, in this order, a usage matrix, a list of
-    snippets, and a list of integers indicating the lemma's position in the snippet
-    :param metric: a distance metric compatible with `scipy.spatial.distance.cdist`
-    (e.g. 'cosine', 'euclidean')
-    :return: the mean pairwise distance between two usage matrices
-    """
-    if isinstance(word_usages1, tuple):
-        usage_matrix1, _, _ = word_usages1
-    else:
-        usage_matrix1 = word_usages1
-
-    if isinstance(word_usages2, tuple):
-        usage_matrix2, _, _ = word_usages2
-    else:
-        usage_matrix2 = word_usages2
-
-    if usage_matrix1.shape[0] == 0 or usage_matrix2.shape[0] == 0:
-        logger.info('In T1: {}   In T2: {}'.format(usage_matrix1.shape[0] > 0, usage_matrix2.shape[0] > 0))
-        return 0.
-
-    return np.mean(cdist(usage_matrix1, usage_matrix2, metric=metric))
 
 
 def main():
@@ -47,7 +16,7 @@ def main():
     """
 
     # Get the arguments
-    args = docopt("""Compute (diachronic) distance between sets of contextualised representations.
+    args = docopt("""Compute average contextualised representations.
 
     Usage:
         prototype.py <testSet> <valueFile> <outPath>
@@ -84,8 +53,6 @@ def main():
     else:
         raise ValueError('valueFile 1: wrong format.')
 
-
-    # Print only targets to output file
     n_ = 0
     prototype_vectors = {}
 
