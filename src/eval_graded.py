@@ -15,7 +15,10 @@ def get_ys(model_answers, true_answers):
     y_hat = {}
     with open(model_answers, 'r', encoding='utf-8') as f_in:
         for line in f_in:
-            lemma, score, _ = line.strip().split('\t')
+            try:
+                lemma, score, _ = line.strip().split('\t')
+            except ValueError:
+                lemma, score, _, _ = line.strip().split('\t')
             if score == 'nan':
                 continue
             y_hat[lemma] = float(score)
