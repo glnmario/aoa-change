@@ -64,6 +64,8 @@ def main():
 
         if not np.isnan(np.sum(prototype)):
             prototype_vectors[target] = np.mean(usages[target], axis=0)
+        else:
+            continue
 
         logger.info(target)
         n_ += 1
