@@ -58,9 +58,12 @@ def main():
 
     for target in tqdm(targets):
         try:
-            prototype_vectors[target] = np.mean(usages[target], axis=0)
+            prototype = np.mean(usages[target], axis=0)
         except KeyError:
             continue
+
+        if not np.isnan(np.sum(prototype)):
+            prototype_vectors[target] = np.mean(usages[target], axis=0)
 
         logger.info(target)
         n_ += 1
