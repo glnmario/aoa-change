@@ -33,14 +33,11 @@ def main():
     contexts = {w: set() for w in targets}
 
     for line in tqdm(lines):
-        print(line)
         tokens_tmp = line.split()
         tokens = []
         for token in tokens_tmp:
             if not all(c in string.punctuation for c in token):
                 tokens.append(token.lower())
-        print(tokens)
-        print()
         for i, token in enumerate(tokens):
             if token in contexts:
                 left_window = tokens[max(0, i - args.window_size): i]
